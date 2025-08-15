@@ -6,6 +6,9 @@ void addstock(int *container, int *count, int stocks[], int ID[], char name[][25
 void removestock( int *count, int stocks[], int ID[], char name[][25], int quantities[]);
 void update(int *count,int ID[], int quantities[]);
 void display(int ID[], char name[][25], int quantities[], int *count);
+void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], int quantities[]);
+void removedata();
+
 
 void addstock(int *container, int *count,int stocks[], int ID[], char name[][25], int quantities[]){
     if(*count == 0){
@@ -42,15 +45,17 @@ void menu(int *contianer, int *count,int stocks[], int ID[], char name[][25], in
         printf("2. Remove Stock from Menu\n");
         printf("3. Update Quantities\n");
         printf("4. Display Stock Levels\n");
-        printf("5. Exit\n");
-        printf("Enter Option: ");
+        printf("5. Save information\n");
+        printf("6. Remove Saved Data\n");
+        printf("7. Resume to previos data\n");
+        printf("8. Exit\n");
+        printf("Enter Option:");
         scanf("%d", &n);            
 
-        if (n != 1 && n != 2 && n != 3 && n != 4){
+        if (n != 1 && n != 2 && n != 3 && n != 4 && n != 5 && n != 6){
             printf("\nInvalid Value\n");
         }
         
-
         switch (n){
         case 1:
             printf("How many individual stocks will you be adding?");
@@ -67,10 +72,19 @@ void menu(int *contianer, int *count,int stocks[], int ID[], char name[][25], in
         case 4:
             display(ID, name, quantities, count);
             break;
+        case 5:
+            Save(contianer, count, stocks, ID,name, quantities);
+            break;
+        case 6:
+            removedata();
+            break;
+
+
+
         default:
             break;
         }
-    } while (n != 5);
+    } while (n != 6);
 }
 void removestock(int *count, int stocks[], int ID[], char name[][25], int quantities[]){
     int counter = 0, target, temp, temp2, temp3, verify = 0;
@@ -158,6 +172,31 @@ void display(int ID[], char name[][25], int quantities[], int *count){
         printf("quantities:%d\n", quantities[i]);
     }
 }
+void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], int quantities[]){
+    FILE *pF = fopen("Information.txt", "w");
+
+    if (*count == 0){
+        printf("No Current Stock in this warehouse\n");
+    }
+
+    for (int i = 0; i < *count; i++){
+        fprintf(pF, "%d\n", ID[i]);
+        fprintf(pF,"%d\n", *count);
+        fprintf(pF,"%s\n", name[i]);
+        fprintf(pF,"%d\n", quantities[i]);
+    }
+    fclose(pF);
+}
+void removedata(){
+    int inf = 0;
+    while (inf != 1){
+        printf("Are you sure you want ");
+        
+    }
+    
+    
+}
+
 
 int main(){
     int container = 0, count = 0, stocks[25], quantities[25], ID[25];
