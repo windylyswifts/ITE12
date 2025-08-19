@@ -1,0 +1,10 @@
+#Note that this is according to ordered stocks
+
+#Stock 0
+#ID:
+123
+#Name:
+1
+#Quantity:
+1
+
