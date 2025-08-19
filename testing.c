@@ -173,6 +173,8 @@ void display(int ID[], char name[][25], int quantities[], int *count){
 }
 void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], int quantities[]){
     char choice;
+    int counter = 0;
+    char buffer[50];
     FILE *check = fopen("Information.txt", "r");
     if (check != NULL){
         fclose(check);
@@ -180,14 +182,43 @@ void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], in
         printf("WARNING: Information.txt already has existing Data, Do you wish to continue and overwrite the existing data? Answer Y/N: ");
         scanf("%c", &choice);
         if (choice == 'y' && choice == 'Y'){
-            FILE *pF = fopen("Information.txt", "w");
-        
+            FILE *pF = fopen("Information.txt", "w");     
+            for (int i = 0; i < *count; i++){
+                fprintf(pF, "#Stock %d\n", i);
+                fprintf(pF, "#ID:\n");
+                fprintf(pF, "%d\n", ID[i]);
+                fprintf(pF, "#Name:\n");
+                fprintf(pF,"%s", name[i]);
+                fprintf(pF, "#Quantity:\n");
+                fprintf(pF,"%d\n\n", quantities[i]);
+            }
+            fclose(pF);
+            return;     
+        }
+        else{
+            printf("\nCancelled\n");
+        }
+        if (choice ==  'n' && choice == 'N'){
+            printf("Do you wish to append the new information to the old data? Answer 'Y/N': ");
+            scanf("%d", &choice);//reusing the same variable and overwrite it
+            if (choice == 'Y' && choice == 'y'){
+            FILE *pF = fopen("Information.txt", "r");
+            for (int i = 0; i < *count; i++){
+                while (fgets(buffer, sizeof(buffer), pF)){
+                    if (strncmp(buffer, "#Stock", 6) == 0){ //using strncmp so that only the first 6 characters will be read
+                        counter++;
+                    }
+                    else
+                        continue;
+                }
+            }
+            fclose(pF);
+            FILE *pF = fopen("Information.txt", "a");
+            
             if (*count == 0){
                 printf("No Current Stock in this warehouse\n");     
-            }
-            else
-                fprintf(pF, "#Note that this is according to ordered stocks\n\n");
-            
+                return;
+            }            
             for (int i = 0; i < *count; i++){
                 fprintf(pF, "#Stock %d\n", i);
                 fprintf(pF, "#ID:\n");
@@ -198,10 +229,7 @@ void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], in
                 fprintf(pF,"%d\n\n", quantities[i]);
             }
             fclose(pF);     
-        }
-        else{
-            printf("\nCancelled\n");
-            return;
+            }
         }
     }
 }
