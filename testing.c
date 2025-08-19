@@ -178,11 +178,14 @@ void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], in
     if (*count == 0){
         printf("No Current Stock in this warehouse\n");
     }
+    else
+        fprintf(pF, "//Note that this is according to ordered stocks");
 
     for (int i = 0; i < *count; i++){
+        fprintf(pF, "//Stock %d", i);
         fprintf(pF, "%d\n", ID[i]);
         fprintf(pF,"%d\n", *count);
-        fprintf(pF,"%s\n", name[i]);
+        fprintf(pF,"%s", name[i]);
         fprintf(pF,"%d\n", quantities[i]);
     }
     fclose(pF);
