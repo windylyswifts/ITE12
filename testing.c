@@ -7,7 +7,7 @@ void removestock( int *count, int stocks[], int ID[], char name[][25], int quant
 void update(int *count,int ID[], int quantities[]);
 void display(int ID[], char name[][25], int quantities[], int *count);
 void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], int quantities[]);
-
+void resume();
 
 void addstock(int *container, int *count,int stocks[], int ID[], char name[][25], int quantities[]){
     if(*count == 0){
@@ -175,13 +175,19 @@ void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], in
     char choice;
     int counter = 0;
     char buffer[50];
+    if (*count == 0){
+        printf("No Current Stock in this warehouse\n");     
+        return;
+    }   
+
     FILE *check = fopen("Information.txt", "r");
     if (check != NULL){
         fclose(check);
         getchar(); //there was a problem here, i added getchar to trash any characters that scanf might read
         printf("WARNING: Information.txt already has existing Data, Do you wish to continue and overwrite the existing data? Answer Y/N: ");
         scanf("%c", &choice);
-        if (choice == 'y' && choice == 'Y'){
+        getchar();//there was a problem, adding getchar here to remove any characters that scanf might read
+        if (choice == 'y' || choice == 'Y'){
             FILE *pF = fopen("Information.txt", "w");     
             for (int i = 0; i < *count; i++){
                 fprintf(pF, "#Stock %d\n", i);
@@ -198,29 +204,24 @@ void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], in
         else{
             printf("\nCancelled\n");
         }
-        if (choice ==  'n' && choice == 'N'){
+        if (choice ==  'n' || choice == 'N'){
             printf("Do you wish to append the new information to the old data? Answer 'Y/N': ");
-            scanf("%d", &choice);//reusing the same variable and overwrite it
-            if (choice == 'Y' && choice == 'y'){
+            scanf("%c", &choice);//reusing the same variable and overwrite it
+            if (choice == 'Y' || choice == 'y'){
             FILE *pF = fopen("Information.txt", "r");
             for (int i = 0; i < *count; i++){
                 while (fgets(buffer, sizeof(buffer), pF)){
-                    if (strncmp(buffer, "#Stock", 6) == 0){ //using strncmp so that only the first 6 characters will be read
+                    buffer[strcspn(buffer, "\n")] = '\0';//this will remove newline
+                    if (strncmp(buffer, "Stock", 5) == 0){ //using strncmp so that only the first 5 characters will be read
                         counter++;
                     }
-                    else
-                        continue;
                 }
             }
             fclose(pF);
-            FILE *pF = fopen("Information.txt", "a");
-            
-            if (*count == 0){
-                printf("No Current Stock in this warehouse\n");     
-                return;
-            }            
+            pF = fopen("Information.txt", "a");
+                     
             for (int i = 0; i < *count; i++){
-                fprintf(pF, "#Stock %d\n", i);
+                fprintf(pF, "Stock %d\n", counter);
                 fprintf(pF, "#ID:\n");
                 fprintf(pF, "%d\n", ID[i]);
                 fprintf(pF, "#Name:\n");
@@ -232,8 +233,27 @@ void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], in
             }
         }
     }
+    //excuting if there was no information inside of "information.txt"
+    check = fopen("Information.txt", "r");
+    if (check == NULL){
+        fclose(check);
+        FILE *pF = fopen("Information.txt", "w");     
+        for (int i = 0; i < *count; i++){
+            fprintf(pF, "#Stock %d\n", i);
+            fprintf(pF, "#ID:\n");
+            fprintf(pF, "%d\n", ID[i]);
+            fprintf(pF, "#Name:\n");
+            fprintf(pF,"%s", name[i]);
+            fprintf(pF, "#Quantity:\n");
+            fprintf(pF,"%d\n\n", quantities[i]);
+    }
+    fclose(pF);
+    return;
+    }
+    
+    
+         
 }
-
 
 int main(){
     int container = 0, count = 0, stocks[25], quantities[25], ID[25];
