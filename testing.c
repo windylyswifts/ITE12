@@ -7,8 +7,8 @@ void removestock( int *count, int stocks[], int ID[], char name[][25], int quant
 void update(int *count,int ID[], int quantities[]);
 void display(int ID[], char name[][25], int quantities[], int *count);
 void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], int quantities[]);
-void resume();
-
+void resume(int *contianer, int *count,int stocks[], int ID[], char name[][25], int quantities[]);
+ 
 void addstock(int *container, int *count,int stocks[], int ID[], char name[][25], int quantities[]){
     if(*count == 0){
         for (int i = 0; i < *container; i++){
@@ -33,7 +33,7 @@ void addstock(int *container, int *count,int stocks[], int ID[], char name[][25]
             fgets(name[i], 25, stdin);
             printf("\nHow many Quantity?:");
             scanf("%d", &quantities[i]);
-            }
+        }
     }
 }
 void menu(int *contianer, int *count,int stocks[], int ID[], char name[][25], int quantities[]) {
@@ -45,45 +45,41 @@ void menu(int *contianer, int *count,int stocks[], int ID[], char name[][25], in
         printf("3. Update Quantities\n");
         printf("4. Display Stock Levels\n");
         printf("5. Save information\n");
-        printf("6. Remove Saved Data\n");
-        printf("7. Resume to previos data\n");
-        printf("8. Exit\n");
+        printf("6. Resume to previos data\n");
+        printf("7. Exit\n");
         printf("Enter Option:");
         scanf("%d", &n);            
-
+        
         if (n != 1 && n != 2 && n != 3 && n != 4 && n != 5 && n != 6){
             printf("\nInvalid Value\n");
         }
         
         switch (n){
         case 1:
-            printf("How many individual stocks will you be adding?");
-            scanf("%d", contianer);
-            addstock(contianer, count, stocks, ID,name, quantities);
+        printf("How many individual stocks will you be adding?");
+        scanf("%d", contianer);
+        addstock(contianer, count, stocks, ID,name, quantities);
             break;
-        case 2:
+            case 2:
             printf("Note: Once A stock is removed, any stocks proceeding from that stock will be moved accordingly");
             removestock(count, stocks, ID,name, quantities);
             break;
-        case 3:
+            case 3:
             update(count, ID, quantities);
             break;
-        case 4:
+            case 4:
             display(ID, name, quantities, count);
             break;
-        case 5:
+            case 5:
             Save(contianer, count, stocks, ID,name, quantities);
             break;
-        case 6:
-
+            case 6:
+            resume(contianer, count, stocks, ID,name, quantities);
             break;
-
-
-
-        default:
+            default:
             break;
         }
-    } while (n != 6);
+    } while (n != 7);
 }
 void removestock(int *count, int stocks[], int ID[], char name[][25], int quantities[]){
     int counter = 0, target, temp, temp2, temp3, verify = 0;
@@ -107,7 +103,7 @@ void removestock(int *count, int stocks[], int ID[], char name[][25], int quanti
                 temp2 = stocks[counter];
                 stocks[counter] = stocks[counter+1];
                 stocks[counter+1] = temp2;
-
+                
                 temp3 = quantities[counter];
                 quantities[counter] = quantities[counter+1];
                 quantities[counter+1] = temp3;
@@ -128,7 +124,7 @@ void removestock(int *count, int stocks[], int ID[], char name[][25], int quanti
             break;
         }
         else
-            counter++;
+        counter++;
         if (verify != 0){
             printf("\nCouldn't find the ID");
         }
@@ -144,7 +140,7 @@ void update(int *count,int ID[], int quantities[]){
         scanf("%d", &temp);
     }
 
-
+    
     for (int i = 0; i < *count; i++){
         if (temp == ID[i]){
             printf("ID match!\n");
@@ -196,7 +192,8 @@ void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], in
                 fprintf(pF, "#Name:\n");
                 fprintf(pF,"%s", name[i]);
                 fprintf(pF, "#Quantity:\n");
-                fprintf(pF,"%d\n\n", quantities[i]);
+                fprintf(pF,"%d\n", quantities[i]);
+                fprintf(pF,"==============\n");
             }
             fclose(pF);
             return;     
@@ -227,7 +224,8 @@ void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], in
                 fprintf(pF, "#Name:\n");
                 fprintf(pF,"%s", name[i]);
                 fprintf(pF, "#Quantity:\n");
-                fprintf(pF,"%d\n\n", quantities[i]);
+                fprintf(pF,"%d\n", quantities[i]);
+                fprintf(pF,"==============\n");
             }
             fclose(pF);     
             }
@@ -250,11 +248,46 @@ void Save(int *contianer, int *count,int stocks[], int ID[], char name[][25], in
     fclose(pF);
     return;
     }
-    
-    
-         
 }
+void resume(int *contianer, int *count,int stocks[], int ID[], char name[][25], int quantities[]){
+    char buffer[255];
+    int counter =1, operator = 0, organizer = 0; 
+    FILE *pF = fopen("Information.txt", "r");
+    while (fgets(buffer, 255, pF) != NULL){
+        if (counter % 2 == 0){//skipping every "even" numbers
+            counter++;
+            continue;
+        }
+        else{
+            switch (operator){   
+            case 0:
+                (*count)++;
+                operator = 1;
+                break;
+            case 1:
+                sscanf(buffer, "%d", &ID[organizer]);
+                operator = 2;
+                break; 
+            case 2:
+                strcpy(name[organizer], buffer); // copy name line
+                name[organizer][strcspn(name[organizer], "\n")] = 0;
+                operator = 3;
+                break;
+            case 3:
+                sscanf(buffer, "%d", &quantities[organizer]);
+                operator = 0;
+                organizer++;
+                break;
+            default:
+                break;
+            }
+        }
+        counter++;
+    }
+    printf("DONE");
+    fclose(pF);
 
+}
 int main(){
     int container = 0, count = 0, stocks[25], quantities[25], ID[25];
     char name[25][25];

@@ -1,1 +1,8 @@
-
+#Stock 0
+#ID:
+1231
+#Name:
+isiah
+#Quantity:
+2
+==============
