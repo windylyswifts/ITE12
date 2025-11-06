@@ -296,5 +296,5 @@ int main(){
 
     menu(&container, &count,  stocks, ID, name, quantities);
 
-    return 0;
+    return 0; 
 }
