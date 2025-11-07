@@ -2,15 +2,13 @@
 #ID:
 123123
 #Name:
-isiahhahaha
-#Quantity:
+isiahhahaha#Quantity:
 2
 ==============
 #Stock 1
 #ID:
 2
 #Name:
-1
-#Quantity:
+1#Quantity:
 1
 ==============

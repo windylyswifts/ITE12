@@ -1,32 +1,39 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 typedef struct{
-    int stocks[25];
-    int quantities[25];
-    int ID[25];
-    char name[25][25];
+    int stocks;
+    int quantities;
+    int ID;
+    char name[25];
 }units;
 
-void menu(int *holder, int *count);
-void addStock(int *holder, int *count);
+int counter = 0;
 
+int main(){
+    int n;
 
-int main(){ 
-    int holder = 0, count = 0;
-    
-    printf("WELCOME TO THE ACCOUNT MENU\n");
-    
-    
-    menu(&holder, &count);
-    
-    
+    printf("how many products do you plan to add(rough estimation): ");
+    scanf("%d", &n);
+
+    units *container = malloc(n * sizeof(units));
+    if(container == NULL){
+        printf("THERE WAS AN ERROR WHEN ALLOCATING MEMORY");
+        return 0;
+    }
+
+    counter = n;
+
+    menu(n, &container);
+
     return 0;
 }
 
+void menu(int n, units **container){
+    int choice = 0, newRealloc;
+    char choiceRealloc;
 
-void menu(int *holder, int *count){
-    int checker;
-    
     do{
         printf("\n---------MENU----------\n");
         printf("1. Add New Stock\n");
@@ -37,24 +44,44 @@ void menu(int *holder, int *count){
         printf("6. Resume to previos data\n");
         printf("7. Exit\n");
         printf("Enter Option:");
-        scanf("%d", &checker);
+        scanf("%d", &n);            
         
-        switch (checker){
-            case 1:
-            addStock(holder, count);
-            break;
-            
-        default:
-        break;
+        if (n != 1 && n != 2 && n != 3 && n != 4 && n != 5 && n != 6){
+            printf("\nInvalid Value\n");
+            continue;
         }
+
+        getchar();
         
-    } while (checker != 5);
+        switch (choice){
+        case 1:
+            if (counter != 0){
+                printf("Current available slots %d\n", counter);
+
+            }
+            else{
+                printf("It seems that you run out of avaiable slot\n");
+                printf("Do you wish to allocate more slots?: (y/n)");
+                scanf("%c", &choiceRealloc);
+                if (choiceRealloc == "y" || "Y"){
+                    printf("How much you do want to allocate?: ");
+                    scanf("%d", &newRealloc);
+                    *container = realloc(*container, newRealloc * sizeof(units));
+                }
+                
+
+            }
+            
+
+        
+            break;
+        
+        default:
+            break;
+        }
+
+    } while (choice != 7);
     
-    void addStock(int *holder, int *count){
 
-
-
-        
-    }
     
 }
