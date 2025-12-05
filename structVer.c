@@ -9,7 +9,10 @@ typedef struct{
 }units;
 
 int counter = 0;
+int deadline = 0;
 
+void menu(int *n, units **container);
+void addStock(int *n, units **container);
 int main(){
     int n;
 
@@ -21,6 +24,8 @@ int main(){
         printf("THERE WAS AN ERROR WHEN ALLOCATING MEMORY");
         return 0;
     }
+
+    deadline = n;
 
     menu(&n, &container);
 
@@ -53,16 +58,16 @@ void menu(int *n, units **container){
         
         switch (choice){
         case 1:
-            if (counter != 0){
+            if (deadline != 0){
                 printf("Current available slots %d\n", counter);
-                addStock(n, *container);
+                addStock(n, container);
 
             }
             else{
                 printf("It seems that you run out of avaiable slot\n");
                 printf("Do you wish to allocate more slots?: (y/n)");
-                scanf("%c", &choiceRealloc);
-                if (choiceRealloc == "y" || "Y"){
+                scanf(" %c", &choiceRealloc);
+                if (choiceRealloc == 'y' || choiceRealloc == 'Y'){
                     printf("How much you do want to allocate?: ");
                     scanf("%d", &newRealloc);
                     units *ptr = realloc(*container, (newRealloc * (*n)) *sizeof(units));
@@ -86,7 +91,7 @@ void menu(int *n, units **container){
 
 void addStock(int *n, units **container){
     for (int i = counter; i < *n; i++){
-        printf("Product Number [%d]:\n");
+        printf("Product Number [%d]:\n",i+1);
         printf("What is the name of the product: ");
         fgets((*container)[i].name, 25, stdin);
         printf("Enter the quantity of %s:", (*container)[i].name);
@@ -95,6 +100,6 @@ void addStock(int *n, units **container){
         scanf("%d", &(*container)[i].ID);
         getchar();
     }
-    
 
+    counter = *n;
 }
